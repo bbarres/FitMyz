@@ -23,19 +23,24 @@ single<-read.table("singledata.txt",header=TRUE,sep='\t')
 
 #let see the structure of the data table
 summary(single)
+#and the distribution of the variable of interest
+hist(single$age,by=single$Clone)
 
 #we first build a complete model with all interaction included for the life 
 #expectancy of the clone
-#the explainatory variables are the Clone ID, the Posca treatment and wether 
+#the explainatory variables are the Clone ID, the Posca treatment and whether 
 #or not the larvae were removed along the experiment
-modage<-glm(nb_larve~Clone*Posca*Larves_enlevees*date,family="gaussian",
+modage<-glm(age~Clone*Posca*Larves_enlevees*date,family="gaussian",
             data=single)
 summary(modage)
 
 #because the interactions do not show signigicant effect on the response 
 #variable, we remove the interactions from the model
-modage<-glm(nb_larve~Clone+Posca+Larves_enlevees+date,family="gaussian",data=single)
+modage<-glm(nb_larve~Clone+Posca+Larves_enlevees+date,family="gaussian",data=single2)
+summary(modage)
+drop1(modage,test="Chisq")
+modage<-glm(nb_larve~Clone+Posca+Larves_enlevees,family="gaussian",data=single)
 summary(modage)
 
-
-
+modage<-lm(age~Clone,data=single)
+summary(modage)
