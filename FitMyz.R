@@ -30,12 +30,31 @@ hist(single$age,by=single$Clone)
 #expectancy of the clone
 #the explainatory variables are the Clone ID, the Posca treatment and whether 
 #or not the larvae were removed along the experiment
-modage<-glm(age~Clone*Posca*Larves_enlevees*date,family="gaussian",
-            data=single)
+modage<-glm(age~Clone*Posca*Larves_enlevees*date,family="poisson",data=single)
 summary(modage)
 
 #because the interactions do not show signigicant effect on the response 
 #variable, we remove the interactions from the model
+modage<-glm(age~Clone+Posca+Larves_enlevees+date,family="poisson",data=single)
+summary(modage)
+plot(modage)
+modage<-glm(age~Clone+Posca+date,family="poisson",data=single)
+summary(modage)
+plot(modage)
+modage<-glm(age~Clone+Posca,family="poisson",data=single)
+summary(modage)
+drop1(modage)
+plot(modage)
+
+library(lme4)
+modrage<-glmer(age~Clone+Posca+Larves_enlevees+1|date,family="poisson",data=single)
+modr<-lmer(age~Posca+Larves_enlevees+1|date,data=single)
+
+single2<-single[single$date!="25-04-16",]
+modage<-glm(age~Clone+Larves_enlevees,family="poisson",data=single2)
+summary(modage)
+
+
 modage<-glm(nb_larve~Clone+Posca+Larves_enlevees+date,family="gaussian",data=single2)
 summary(modage)
 drop1(modage,test="Chisq")
