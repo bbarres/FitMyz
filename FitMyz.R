@@ -46,6 +46,10 @@ summary(modage)
 drop1(modage)
 plot(modage)
 
+
+
+
+
 library(lme4)
 modrage<-glmer(age~Clone+Posca+Larves_enlevees+1|date,family="poisson",data=single)
 modr<-lmer(age~Posca+Larves_enlevees+1|date,data=single)
