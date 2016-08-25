@@ -89,13 +89,14 @@ barplot(c(mean(single2$nb_larve[single2$Clone=="13 001 041"]),
 ###############################################################################
 
 
-#we start with binomial tests for each trial
+#we start with binomial tests for each trial and we build a table of results
 rez<-c()
 for (i in c(1:12)) {
   temp<-binom.test(c(comptemp$Clone_1_BM[i],comptemp$Clone_2_BM[i]),p=0.5)
   rez<-rbind(rez,c(temp$parameter,temp$p.value))
   
 }
+rez
 
 
 
