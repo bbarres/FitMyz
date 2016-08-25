@@ -13,7 +13,7 @@ setwd("~/Work/Rfichiers/Githuber/FitMyz_data")
 ###############################################################################
 
 compspa<-read.table("compdata.txt",header=TRUE,sep='\t')
-comptemp<-read.table("",header=TRUE,sep='\t')
+comptemp<-read.table("tempcomp.txt",header=TRUE,sep='\t')
 single<-read.table("singledata.txt",header=TRUE,sep='\t')
 
 
@@ -82,3 +82,33 @@ plot(modnbl)
 barplot(c(mean(single2$nb_larve[single2$Clone=="13 001 041"]),
         mean(single2$nb_larve[single2$Clone=="13 001 048"]),
         mean(single2$nb_larve[single2$Clone=="13 001 050"])))
+
+
+###############################################################################
+#temporal competition
+###############################################################################
+
+
+#we start with binomial tests for each trial
+rez<-c()
+for (i in c(1:12)) {
+  temp<-binom.test(c(comptemp$Clone_1_BM[i],comptemp$Clone_2_BM[i]),p=0.5)
+  rez<-rbind(rez,c(temp$parameter,temp$p.value))
+  
+}
+
+
+
+
+tempmod41<-glm(cbind(Clone_1_BM,Clone_2_BM)~Clone_2,family="binomial",
+               data=comptemp[1:8,])
+summary(tempmod41)
+tempmod48<-glm(cbind(Clone_1_BM,Clone_2_BM)~Clone_2,family="binomial",
+               data=comptemp[9:16,])
+summary(tempmod48)
+tempmod50<-glm(cbind(Clone_1_BM,Clone_2_BM)~Clone_2,family="binomial",
+               data=comptemp[17:24,])
+summary(tempmod50)
+
+
+
