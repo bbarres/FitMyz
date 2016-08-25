@@ -88,7 +88,6 @@ barplot(c(mean(single2$nb_larve[single2$Clone=="13 001 041"]),
 #temporal competition
 ###############################################################################
 
-
 #we start with binomial tests for each trial and we build a table of results
 rez<-c()
 for (i in c(1:12)) {
@@ -97,7 +96,6 @@ for (i in c(1:12)) {
   
 }
 rez
-
 
 
 #we try to investigate if the effect of the competitive clone impact the 
@@ -111,6 +109,13 @@ summary(tempmod48)
 tempmod50<-glm(cbind(Clone_1_BM,Clone_2_BM)~Clone_2,family="binomial",
                data=comptemp[17:24,])
 summary(tempmod50)
+
+
+###############################################################################
+#Metapopulation competition
+###############################################################################
+
+
 
 
 
