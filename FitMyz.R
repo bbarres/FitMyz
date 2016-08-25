@@ -99,7 +99,8 @@ for (i in c(1:12)) {
 
 
 
-
+#we try to investigate if the effect of the competitive clone impact the 
+#of the clone development
 tempmod41<-glm(cbind(Clone_1_BM,Clone_2_BM)~Clone_2,family="binomial",
                data=comptemp[1:8,])
 summary(tempmod41)
