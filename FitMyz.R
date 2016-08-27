@@ -115,7 +115,30 @@ summary(tempmod50)
 #Metapopulation competition
 ###############################################################################
 
+#very few things happened in the box, and we are mostly interested by the 
+#dynamic within the pillbox. Therefor, we remove the "boite" lines
+compspa<-compspa[compspa$Pilulier!="boite",]
+compspa<-droplevels(compspa)
 
+#let's check the evolution of the different type of aphid across time
+op<-par(mfrow=c(3,1))
+boxplot(compspa$L1L2~compspa$Day,main="Evolution temporelle Larve L1-L2",
+        boxwex=0.5)
+boxplot(compspa$L3L4~compspa$Day,main="Evolution temporelle Larve L3-L4",
+        boxwex=0.5)
+boxplot(compspa$Fem~compspa$Day,main="Evolution temporelle Femelle",
+        boxwex=0.5)
+par(op)
+
+#let's check the distribution between pillbox at the end of the experiment
+op<-par(mfrow=c(3,1))
+boxplot(compspa$L1L2[compspa$Day==10]~compspa$Pilulier[compspa$Day==10],
+        boxwex=0.5,main="Distribution par pilulier Larve L1-L2")
+boxplot(compspa$L3L4[compspa$Day==10]~compspa$Pilulier[compspa$Day==10],
+        boxwex=0.5,main="Distribution par pilulier Larve L3-L4")
+boxplot(compspa$Fem[compspa$Day==10]~compspa$Pilulier[compspa$Day==10],
+        boxwex=0.5,main="Distribution par pilulier Femelle")
+par(op)
 
 
 
