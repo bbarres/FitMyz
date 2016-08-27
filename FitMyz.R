@@ -116,7 +116,7 @@ summary(tempmod50)
 ###############################################################################
 
 #very few things happened in the box, and we are mostly interested by the 
-#dynamic within the pillbox. Therefor, we remove the "boite" lines
+#dynamic within the pillbox. Therefore, we remove the "boite" lines
 compspa<-compspa[compspa$Pilulier!="boite",]
 compspa<-droplevels(compspa)
 
@@ -130,6 +130,63 @@ boxplot(compspa$Fem~compspa$Day,main="Evolution temporelle Femelle",
         boxwex=0.5)
 par(op)
 
+#we can also plot the evolution in for each experiment, the evoluation of each
+#pillbox
+op<-par(mfrow=c(3,3))
+
+for (j in 1:9) {
+  testid<-levels(compspa$Test)[j]
+  limi<-max(compspa[compspa$Test==testid,c("L1L2","L3L4","Fem")])
+  liad<-max(compspa[,("Fem")])
+  plot(compspa$L1L2[compspa$Test==testid & 
+                      compspa$Pilulier==levels(compspa$Pilulier)[1]]~
+         compspa$Day[compspa$Test==testid & 
+                       compspa$Pilulier==levels(compspa$Pilulier)[1]],type="l",
+       col=1,ylim=c(0,limi),main=paste(testid,"- Evolution temporelle L1L2"),
+       lwd=3,xlab="Nombre de jours",ylab="Effectif")
+  for (i in 2:9) {
+    lines(compspa$L1L2[compspa$Test==testid & 
+                         compspa$Pilulier==levels(compspa$Pilulier)[i]]~
+            compspa$Day[compspa$Test==testid & 
+                          compspa$Pilulier==levels(compspa$Pilulier)[i]],type="l",
+          col=i,ylim=c(0,limi),main=paste(testid,"- Evolution temporelle L1L2"),
+          lwd=3,xlab="Nombre de jours",ylab="Effectif")
+  }
+  
+  plot(compspa$L3L4[compspa$Test==testid & 
+                      compspa$Pilulier==levels(compspa$Pilulier)[1]]~
+         compspa$Day[compspa$Test==testid & 
+                       compspa$Pilulier==levels(compspa$Pilulier)[1]],type="l",
+       col=1,ylim=c(0,limi),main=paste(testid,"- Evolution temporelle L3L4"),
+       lwd=3,xlab="Nombre de jours",ylab="Effectif")
+  for (i in 2:9) {
+    lines(compspa$L3L4[compspa$Test==testid & 
+                         compspa$Pilulier==levels(compspa$Pilulier)[i]]~
+            compspa$Day[compspa$Test==testid & 
+                          compspa$Pilulier==levels(compspa$Pilulier)[i]],type="l",
+          col=i,ylim=c(0,limi),main=paste(testid,"- Evolution temporelle L3L4"),
+          lwd=3,xlab="Nombre de jours",ylab="Effectif")
+  }
+  
+  plot(compspa$Fem[compspa$Test==testid & 
+                     compspa$Pilulier==levels(compspa$Pilulier)[1]]~
+         compspa$Day[compspa$Test==testid & 
+                       compspa$Pilulier==levels(compspa$Pilulier)[1]],type="l",
+       col=1,ylim=c(0,liad),main=paste(testid,"- Evolution temporelle Femelle"),
+       lwd=3,xlab="Nombre de jours",ylab="Effectif")
+  for (i in 2:9) {
+    lines(compspa$Fem[compspa$Test==testid & 
+                        compspa$Pilulier==levels(compspa$Pilulier)[i]]~
+            compspa$Day[compspa$Test==testid & 
+                          compspa$Pilulier==levels(compspa$Pilulier)[i]],type="l",
+          col=i,ylim=c(0,liad),main=paste(testid,"- Evolution temporelle Femelle"),
+          lwd=3,xlab="Nombre de jours",ylab="Effectif")
+  }
+}
+
+par(op)
+
+
 #let's check the distribution between pillbox at the end of the experiment
 op<-par(mfrow=c(3,1))
 boxplot(compspa$L1L2[compspa$Day==10]~compspa$Pilulier[compspa$Day==10],
@@ -139,6 +196,7 @@ boxplot(compspa$L3L4[compspa$Day==10]~compspa$Pilulier[compspa$Day==10],
 boxplot(compspa$Fem[compspa$Day==10]~compspa$Pilulier[compspa$Day==10],
         boxwex=0.5,main="Distribution par pilulier Femelle")
 par(op)
+
 
 
 
