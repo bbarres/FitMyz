@@ -198,5 +198,42 @@ boxplot(compspa$Fem[compspa$Day==10]~compspa$Pilulier[compspa$Day==10],
 par(op)
 
 
+#plot of the final repartition of the clone in competition for
+temp<-compspa[compspa$Day==10,]
+levels(temp$Clone_1)<-c(1,2)
+levels(temp$Clone_2)<-c(2,3)
+
+op<-par(mfrow=c(3,3),mar=c(1,4.1,2,0.1))
+
+for (i in 1:81) {
+  if (!is.na(temp$BM_Clone_1)[i]) {
+    pie(cbind(temp$BM_Clone_1,temp$BM.Clone_2)[i,],
+        col=c(as.numeric(as.character(temp$Clone_1[i])),
+              as.numeric(as.character(temp$Clone_2[i]))),
+        main=temp$Unit[i],
+        radius=sqrt(sum(temp[i,c("L1L2","L3L4","Fem")]))/20)
+  } else {
+    pie(5,col="transparent",main=temp$Unit[i],
+        radius=sqrt(sum(temp[i,c("L1L2","L3L4","Fem")]))/20)
+  }
+  
+}
+
+par(op)
+
+
+#model to explore if some factors affect the development of the clones
+temp2<-cbind(temp,"totsum"=rowSums(temp[,c("L1L2","L3L4","Fem")]))
+modefspa<-glm(totsum~Pilulier*Test,family="poisson",data=temp2)
+summary(modefspa)
+#no effect of the pillbox on the number of individual at the end of the 
+#experiment (except for the pillbox 5 where the original individuals 
+#were deposited). There is a lot of variability between Test
+
+modefspa<-glm(totsum~Pilulier+Test+Clone_1+Clone_2,
+              family="poisson",data=temp2)
+summary(modefspa)
+
+tapply(temp2$totsum,INDEX=temp2$Pilulier,FUN = mean)
 
 
