@@ -121,7 +121,7 @@ compspatot<-compspatot[compspatot$Pilulier!="boite",]
 compspatot<-droplevels(compspatot)
 #we remove the duplicate in the dataset
 compspa<-compspatot[compspatot$dup=="y",]
-compspatot<-droplevels(compspa)
+compspa<-droplevels(compspa)
 
 #let's check the evolution of the different type of aphid across time
 op<-par(mfrow=c(3,1))
@@ -286,10 +286,41 @@ summary(modeftot)
 #at the end of the experiment, there are significantly less individuals 
 #in the competition with clone 50 involved. It seems also that there are 
 #a few more individuals in the pillbox located at the top of the box 
-#(pillbox 1, 2, 3). But there are a lot of variation between experiments
+#(pillbox 1, 2, 3). Maybe related to some "environmental variation" in the 
+#experimental setting. But there are a lot of variation among pillbox 
+#between experiments
 
 tapply(temp2$totsum,INDEX=temp2$Pilulier,FUN=mean)
 tapply(temp2$totsum,INDEX=temp2$Pilulier,FUN=var)
+
+
+#Let's check if the competition of the different clones affect the 
+#final proportion of the clone. We include the pillbox in the model 
+#because
+
+compspatot10<-compspatot[compspatot$Day==10 & !is.na(compspatot$BM_Clone_1),]
+compspatot10<-droplevels(compspatot10)
+compspatot10<-cbind(compspatot10,
+                    "totsum"=rowSums(compspatot10[,c("L1L2","L3L4","Fem")]))
+
+spa41mod<-glmer(cbind(BM_Clone_1,BM_Clone_2)~Clone_2 + 1|Pilulier,
+                family="binomial",
+                data=compspatot10[compspatot10$Clone_1=='13 001 041',])
+summary(spa41mod)
+
+spa48mod<-glmer(cbind(BM_Clone_1,BM_Clone_2)~Clone_2 + 1|Pilulier,
+                family="binomial",
+                data=compspatot10[compspatot10$Clone_1=='13 001 048',])
+summary(spa48mod)
+
+spa50mod<-glmer(cbind(BM_Clone_1,BM_Clone_2)~Clone_2 + 1|Pilulier,
+                family="binomial",
+                data=compspatot10[compspatot10$Clone_1=='13 001 050',])
+summary(spa50mod)
+
+#it seems that there is no difference for the three clones when they are 
+#competiting with the different clones
+
 
 
 
