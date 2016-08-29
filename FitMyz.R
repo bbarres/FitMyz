@@ -321,6 +321,27 @@ summary(spa50mod)
 #it seems that there is no difference for the three clones when they are 
 #competiting with the different clones
 
+#let's check if the colonization of the different Pillpox depends on the 
+#competing clone, the interaction between the competing clones and the 
+#pillbox, first we prepare the dataset for analysis
+collodat<-compspatot10
+collodat$BM_Clone_1[collodat$BM_Clone_1!=0]<-1
+temp<-glm(BM_Clone_1~Clone_2+Clone_1:Clone_2+Pilulier
+          ,family="binomial",data=collodat)
+temp1<-glm(BM_Clone_1~Clone_2+Pilulier
+          ,family="binomial",data=collodat)
+anova(temp,temp1,test="Chisq") 
+#no significant effect of the interaction between clones
 
+temp2<-glm(BM_Clone_1~Pilulier
+           ,family="binomial",data=collodat)
+anova(temp1,temp2,test="Chisq") 
+#no significant effect of the competing clone
+
+temp3<-glm(BM_Clone_1~Clone_2
+           ,family="binomial",data=collodat)
+anova(temp1,temp3,test="Chisq")
+#no significant effect of the pillbox. No pillbox was colonized
+#more often than others
 
 
