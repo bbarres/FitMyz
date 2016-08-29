@@ -12,7 +12,7 @@ setwd("~/Work/Rfichiers/Githuber/FitMyz_data")
 #Loading the dataset
 ###############################################################################
 
-compspa<-read.table("compdata.txt",header=TRUE,sep='\t')
+compspatot<-read.table("compdata.txt",header=TRUE,sep='\t')
 comptemp<-read.table("tempcomp.txt",header=TRUE,sep='\t')
 single<-read.table("singledata.txt",header=TRUE,sep='\t')
 
@@ -117,8 +117,11 @@ summary(tempmod50)
 
 #very few things happened in the box, and we are mostly interested by the 
 #dynamic within the pillbox. Therefore, we remove the "boite" lines
-compspa<-compspa[compspa$Pilulier!="boite",]
-compspa<-droplevels(compspa)
+compspatot<-compspatot[compspatot$Pilulier!="boite",]
+compspatot<-droplevels(compspatot)
+#we remove the duplicate in the dataset
+compspa<-compspatot[compspatot$dup=="y",]
+compspatot<-droplevels(compspa)
 
 #let's check the evolution of the different type of aphid across time
 op<-par(mfrow=c(3,1))
@@ -148,7 +151,7 @@ for (j in 1:9) {
     lines(compspa$L1L2[compspa$Test==testid & 
                          compspa$Pilulier==levels(compspa$Pilulier)[i]]~
             compspa$Day[compspa$Test==testid & 
-                          compspa$Pilulier==levels(compspa$Pilulier)[i]],type="l",
+                        compspa$Pilulier==levels(compspa$Pilulier)[i]],type="l",
           col=i,ylim=c(0,limi),main=paste(testid,"- Evolution temporelle L1L2"),
           lwd=3,xlab="Nombre de jours",ylab="Effectif")
   }
@@ -163,7 +166,7 @@ for (j in 1:9) {
     lines(compspa$L3L4[compspa$Test==testid & 
                          compspa$Pilulier==levels(compspa$Pilulier)[i]]~
             compspa$Day[compspa$Test==testid & 
-                          compspa$Pilulier==levels(compspa$Pilulier)[i]],type="l",
+                        compspa$Pilulier==levels(compspa$Pilulier)[i]],type="l",
           col=i,ylim=c(0,limi),main=paste(testid,"- Evolution temporelle L3L4"),
           lwd=3,xlab="Nombre de jours",ylab="Effectif")
   }
@@ -207,7 +210,7 @@ op<-par(mfrow=c(3,3),mar=c(1,4.1,2,0.1))
 
 for (i in 1:81) {
   if (!is.na(temp$BM_Clone_1)[i]) {
-    pie(cbind(temp$BM_Clone_1,temp$BM.Clone_2)[i,],
+    pie(cbind(temp$BM_Clone_1,temp$BM_Clone_2)[i,],
         col=c(as.numeric(as.character(temp$Clone_1[i])),
               as.numeric(as.character(temp$Clone_2[i]))),
         main=temp$Unit[i],
@@ -222,18 +225,71 @@ for (i in 1:81) {
 par(op)
 
 
-#model to explore if some factors affect the development of the clones
+###############################################################################
+#Metapopulation competition statistical analyses
+###############################################################################
+
+#with the number of individuals after 3 days
+temp<-compspa[compspa$Day==3,]
+#let sum up the total number of individuals, not taking into account 
+#the stage
 temp2<-cbind(temp,"totsum"=rowSums(temp[,c("L1L2","L3L4","Fem")]))
-modefspa<-glm(totsum~Pilulier*Test,family="poisson",data=temp2)
-summary(modefspa)
-#no effect of the pillbox on the number of individual at the end of the 
-#experiment (except for the pillbox 5 where the original individuals 
-#were deposited). There is a lot of variability between Test
 
-modefspa<-glm(totsum~Pilulier+Test+Clone_1+Clone_2,
-              family="poisson",data=temp2)
-summary(modefspa)
+#let see if the pillbox number and the type of competition experiment 
+#have an effect on the total number of aphids, the interaction are not 
+#included because they are biologicaly irrelevant
+modeftot<-glm(totsum~Pilulier+compID,family="poisson",data=temp2)
+summary(modeftot)
+modefL1L2<-glm(L1L2~Pilulier+compID,family="poisson",data=temp2)
+summary(modefL1L2)
+#After 3 days, we already detect difference between pillbox, but there is no
+#clear pattern for which pillbox is more or less invaded. More importantly, 
+#we already detect that competition with clone 50 show less individuals 
+#(significant for one of the competition)
 
-tapply(temp2$totsum,INDEX=temp2$Pilulier,FUN = mean)
+#with the number of individuals after 5 days
+temp<-compspa[compspa$Day==5,]
+#let sum up the total number of individuals, not taking into account 
+#the stage
+temp2<-cbind(temp,"totsum"=rowSums(temp[,c("L1L2","L3L4","Fem")]))
+
+#let see if the pillbox number and the type of competition experiment 
+#have an effect on the total number of aphids, the interaction are not 
+#included because they are biologicaly irrelevant
+modeftot<-glm(totsum~Pilulier+compID,family="poisson",data=temp2)
+summary(modeftot)
+modefL1L2<-glm(L1L2~Pilulier+compID,family="poisson",data=temp2)
+summary(modefL1L2)
+modefL3L4<-glm(L3L4~Pilulier+compID,family="poisson",data=temp2)
+summary(modefL3L4)
+#here we can see that both competition which include clone 50 are less 
+#populated, even when you consider only the L3L4 larvae
+
+
+#with the final number of individuals
+temp<-compspa[compspa$Day==10,]
+#let sum up the total number of individuals, not taking into account 
+#the stage
+temp2<-cbind(temp,"totsum"=rowSums(temp[,c("L1L2","L3L4","Fem")]))
+
+#let see if the pillbox number and the type of competition experiment 
+#have an effect on the total number of aphids, the interaction are not 
+#included because they are biologicaly irrelevant
+modefL1L2<-glm(L1L2~Pilulier+compID,family="poisson",data=temp2)
+summary(modefL1L2)
+modefL3L4<-glm(L3L4~Pilulier+compID,family="poisson",data=temp2)
+summary(modefL3L4)
+modefFem<-glm(Fem~Pilulier+compID,family="poisson",data=temp2)
+summary(modefFem)
+modeftot<-glm(totsum~Pilulier+compID,family="poisson",data=temp2)
+summary(modeftot)
+#at the end of the experiment, there are significantly less individuals 
+#in the competition with clone 50 involved. It seems also that there are 
+#a few more individuals in the pillbox located at the top of the box 
+#(pillbox 1, 2, 3). But there are a lot of variation between experiments
+
+tapply(temp2$totsum,INDEX=temp2$Pilulier,FUN=mean)
+tapply(temp2$totsum,INDEX=temp2$Pilulier,FUN=var)
+
 
 
